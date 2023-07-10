@@ -41,10 +41,8 @@ class StageToRedshiftOperator(BaseOperator):
         aws_connection=metastoreBackend.get_connection(self.aws_credentials_id)
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
-        self.log.info("Clearing data from destination Redshift table")
         redshift.run("DELETE FROM {}".format(self.table))
 
-        self.log.info("Copying data from S3 to Redshift")
         rendered_key = self.s3_key.format(**context)
         s3_path = "s3://{}/{}".format(self.s3_bucket, rendered_key)
 
@@ -68,4 +66,4 @@ class StageToRedshiftOperator(BaseOperator):
             )
 
         redshift.run(formatted_sql)
-        self.log.info(f"Copied to Redshift success table {self.table}")
+        self.log.info(f"Copy success table {self.table}")

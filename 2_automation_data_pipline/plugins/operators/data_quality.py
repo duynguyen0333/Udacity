@@ -19,7 +19,6 @@ class DataQualityOperator(BaseOperator):
     def execute(self, context):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         for table in self.tables:
-            self.log.info(f"Running Data Quality checks on table: {table}")
             records = redshift.get_records(f"SELECT COUNT(*) FROM {table};")
             if len(records) < 1 or len(records[0]) < 1 or records[0][0] < 1:
                 raise ValueError(f"{table} containe 0 rows")
